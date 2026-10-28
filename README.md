@@ -1,102 +1,122 @@
 # PlacidWay Daily Social Media Content Automation
 
-An n8n workflow prototype that finds source articles from PlacidWay, drafts social copy with an LLM, validates the result, optionally runs a second review pass, and records each run. It is currently configured for **approval-first, dry-run operation**; live Facebook publishing is not configured.
+[![n8n](https://img.shields.io/badge/Workflow-n8n-EA4B71?logo=n8n&logoColor=white)](https://n8n.io/)
+[![Mode](https://img.shields.io/badge/Publishing-Dry%20Run%20Only-orange)](#current-status)
+[![Status](https://img.shields.io/badge/Project-Prototype-blue)](#current-status)
 
-## What it does
+An n8n automation prototype for discovering PlacidWay articles, drafting social media copy with an LLM, validating the draft, optionally running a second review pass, and logging each execution.
 
-- Runs on a daily schedule (9:00 AM, Asia/Karachi) or can be started manually.
-- Reads candidate article URLs from the PlacidWay article sitemap.
-- Limits candidate processing and applies a crawl delay.
-- Generates a concise social post from a source article.
-- Validates the generated post and can run a separate LLM review.
-- Supports an approval-oriented workflow and a Facebook dry-run mode.
-- Stores content/deduplication state in an n8n Data Table and logs run outcomes in a second table.
-- Exposes retry and alert configuration points for operational hardening.
-
-## Current status
-
-| Area | Status |
-|---|---|
-| Scheduled and manual triggers | Configured |
-| Live source sitemap | Configured |
-| LLM post generation | Tested in a successful dry run |
-| Validation and review | Configured; successful sample passed |
-| Content store and run log | Configured in n8n Data Tables |
-| Approval-first mode | Enabled by configuration |
-| Facebook publishing | **Not yet configured** |
-| Facebook dry run | Enabled |
-| Reviewer/alert webhooks | Optional URLs are currently blank |
-
-The workflow has successfully completed a dry run using a real source article and live LLM generation. That verifies the content-generation path, not live publishing to Facebook.
-
-## Example output
-
-Source article: [Stem Cell Facial Rejuvenation in Japan: A Patient's Five-Entry Diary](https://www.placidway.com/article/9807/Stem-Cell-Facial-Rejuvenation-in-Japan-A-Patients-Five-Entry-Diary)
-
-> Considering stem cell facial rejuvenation in Japan? Explore the questions behind the journey. This five-entry diary covers expectations, recovery, safety and key considerations. The composite case describes cultured adipose-derived cells, Tokyo and two trips about five weeks apart. It also highlights checking treatment plans, clinic registration and licensed cell-processing labs under Japan's framework. Read the full article for the diary and planning considerations.
-
-This is an illustrative generated draft, not medical advice or a claim that a treatment is appropriate for any individual. Review health-related claims and source accuracy before approval or publication.
-
-## Workflow overview
-
-1. **Trigger** — scheduled run or manual execution.
-2. **Source discovery** — retrieve candidate URLs from the configured sitemap, subject to candidate limits and crawl delay.
-3. **Content preparation** — fetch source material and prepare the article context.
-4. **Draft generation** — ask the configured LLM to write a social post.
-5. **Quality checks** — run rule-based validation and optional LLM review.
-6. **Approval / dry run** — keep the workflow approval-oriented and avoid a live Facebook post while publishing credentials and test-page settings are not configured.
-7. **Persistence and observability** — store content state and write run outcomes to the run log.
-
-## Configuration
-
-The workflow uses n8n workflow variables for its operating mode. Review these in the exported workflow before running it in another environment:
-
-| Setting | Current value / purpose |
-|---|---|
-| `APPROVAL_MODE` | `true` |
-| `SOURCE_MODE` | `live` |
-| `SOURCE_URL` | `https://www.placidway.com/1/sitemap_articles.xml` |
-| `MAX_CANDIDATES` | `20` |
-| `USE_MOCK_LLM` | `false` |
-| `ENABLE_LLM_REVIEW` | `true` |
-| `MAX_POST_CHARS` | `500` |
-| `FACEBOOK_DRY_RUN` | `true` |
-| `APPROVAL_TIMEOUT_HOURS` | `24` |
-| `MAX_RETRIES` | `3` |
-
-The workflow also references two n8n Data Tables for content state and run logging. When importing into another n8n instance, verify that these tables exist and update any environment-specific references.
-
-## Setup
-
-1. Import the exported workflow JSON into your n8n instance.
-2. Review node settings, workflow variables, Data Table references, and any disabled nodes.
-3. Configure the required LLM connection in n8n credentials.
-4. Keep approval mode and Facebook dry run enabled while testing.
-5. Run manually and inspect the execution, generated post, validation/review results, and run-log entry.
-6. Only enable Facebook publishing after configuring a test Facebook Page, the appropriate Meta Graph API permissions/credentials, page ID, and a deliberate approval step.
-7. Test with a page you control before considering production use.
-
-Exact credential setup depends on the n8n and Meta app configuration used by the operator.
-
-## Security notes
-
-- Do not commit API keys, access tokens, passwords, private webhook URLs, or credential exports.
-- n8n credential values should be managed through n8n's credential store or environment-specific secret management.
-- Review the exported JSON for secret values and personal or environment-specific identifiers before making it public.
-- Use a test Facebook Page you control; do not publish to PlacidWay's official social accounts without explicit authorization.
-
-## Known limitations / next steps
-
-- Live Facebook publishing is not complete or demonstrated by the current dry-run result.
-- Add and test the human approval interaction and reviewer webhook if required for the intended deployment.
-- Configure alert delivery and verify failure handling in the target n8n instance.
-- Capture multiple real-source generated examples and execution evidence.
-- Record a short walkthrough showing source extraction, generated content, review/approval behavior, and the dry-run result.
+> **Current scope:** Source-to-draft automation is demonstrated in a successful dry run. Live Facebook publishing is not yet configured or verified.
 
 ## Repository contents
 
-The repository is intended to contain the n8n workflow export, this README, and any safe example artifacts or documentation needed to reproduce the demo. Secrets and live credentials must remain outside version control.
+| File | Purpose |
+|---|---|
+| [workflow.json](./workflow.json) | Importable n8n workflow export |
+| [README.md](./README.md) | Project overview, setup, configuration, and known limitations |
+
+## Workflow at a glance
+
+**Daily schedule / Manual trigger → Sitemap fetch → Candidate filtering & deduplication → Page enrichment → LLM draft → Rule-based validation → Optional LLM review → Approval / dry-run path → Content store & run log**
+
+### Key capabilities
+
+- **Scheduled and manual execution:** configured for 9:00 AM in the Asia/Karachi timezone, with a manual test trigger.
+- **Source discovery:** reads the public PlacidWay article sitemap and limits processing to a bounded set of candidates.
+- **Responsible crawl behavior:** includes a 10-second delay before fetching a selected article page.
+- **Duplicate prevention:** uses an n8n Data Table to track content and avoid processing the same canonical URL repeatedly.
+- **LLM-assisted drafting:** generates concise social copy with a configurable character limit.
+- **Quality checks:** rule-based validation followed by an optional second LLM review.
+- **Operational visibility:** writes run outcomes to a separate n8n Data Table; retry and alert paths are included in the workflow.
+- **Safer publishing posture:** approval mode is enabled and Facebook dry-run mode is on by default.
+
+## Current status
+
+| Component | Status |
+|---|---|
+| Schedule and manual trigger | Configured |
+| Public sitemap source | Configured |
+| Live article fetch and content preparation | Included in workflow |
+| LLM draft generation | Successful dry run recorded |
+| Rule-based validation and second-pass review | Included; sample run passed |
+| Content store and execution log | Configured in the source n8n instance |
+| Approval-oriented path | Included; reviewer channel needs environment configuration |
+| Facebook dry run | Enabled |
+| Live Facebook publishing | **Not yet configured or verified** |
+| Reviewer and alert webhook destinations | Blank / require configuration |
+
+A successful dry run verified the source-to-generated-draft path with a real source article and LLM generation. It does **not** prove that a post has been published to Facebook.
+
+## Example generated draft
+
+**Source:** [Stem Cell Facial Rejuvenation in Japan: A Patient's Five-Entry Diary](https://www.placidway.com/article/9807/Stem-Cell-Facial-Rejuvenation-in-Japan-A-Patients-Five-Entry-Diary)
+
+> Considering stem cell facial rejuvenation in Japan? Explore the questions behind the journey. This five-entry diary covers expectations, recovery, safety and key considerations. The composite case describes cultured adipose-derived cells, Tokyo and two trips about five weeks apart. It also highlights checking treatment plans, clinic registration and licensed cell-processing labs under Japan's framework. Read the full article for the diary and planning considerations.
+
+This is an illustrative generated draft, not medical advice or an endorsement of a treatment. Health-related claims and source accuracy should be reviewed by a qualified human before approval or publication.
+
+## Architecture
+
+1. **Trigger:** daily schedule or manual execution.
+2. **Discover:** fetch the configured public sitemap.
+3. **Parse and normalize:** extract URLs, normalize fields, reject invalid records, and limit candidate volume.
+4. **Deduplicate and select:** check the persistent content store and select an eligible item.
+5. **Enrich:** wait before fetching the selected article page and extract available page metadata/content.
+6. **Generate:** request a social post from the configured LLM.
+7. **Validate and review:** apply deterministic checks and optionally request a second LLM safety review.
+8. **Approval / dry run:** route through the configured approval path or simulate publishing while Facebook dry-run mode is enabled.
+9. **Persist and observe:** update content state, write a run-log entry, and route failures through configured error/alert handling.
+
+## Configuration reference
+
+The workflow's **Workflow Config** node centralizes the main settings.
+
+| Setting | Current value |
+|---|---|
+| APPROVAL_MODE | true |
+| SOURCE_MODE | live |
+| SOURCE_URL | https://www.placidway.com/1/sitemap_articles.xml |
+| MAX_CANDIDATES | 20 |
+| USE_MOCK_LLM | false |
+| ENABLE_LLM_REVIEW | true |
+| MAX_POST_CHARS | 500 |
+| FACEBOOK_DRY_RUN | true |
+| APPROVAL_TIMEOUT_HOURS | 24 |
+| MAX_RETRIES | 3 |
+
+The export references two n8n Data Tables: one for content/deduplication state and one for run logging. These are environment-specific n8n resources; they must exist and be mapped correctly when importing into another instance.
+
+## Run it in your own n8n instance
+
+1. Download [workflow.json](./workflow.json).
+2. Import the JSON into n8n.
+3. Inspect the workflow and review the **Workflow Config** node.
+4. Recreate or map the required n8n Data Tables in your environment.
+5. Configure the required LLM credentials using n8n's credential manager; credentials are not supplied in this repository.
+6. Keep APPROVAL_MODE=true and FACEBOOK_DRY_RUN=true during initial tests.
+7. Execute the workflow manually and inspect node outputs, validation/review decisions, and the run-log record.
+8. Before enabling any live publishing, configure a Facebook test Page you control, valid Meta Graph API permissions/credentials, the correct Page ID, and a tested human approval process.
+
+Configuration details may vary with n8n version and Meta app permissions.
+
+## Security and responsible use
+
+- Never commit API keys, access tokens, passwords, private webhook URLs, or exported credential values.
+- Store credentials in n8n's credential store or an appropriate secrets manager.
+- Inspect workflow exports for secret values and environment-specific identifiers before publishing them publicly.
+- Do not publish to PlacidWay's official social accounts without explicit authorization.
+- Review medical and healthcare-related content for accuracy and appropriate wording before publication.
+- Respect source-site terms, access policies, and reasonable request rates.
+
+## Known limitations and next steps
+
+- **No live Facebook post has been demonstrated by the current dry run.**
+- Reviewer and alert webhooks are not configured in this export.
+- Data Tables and LLM credentials need to be configured in the destination n8n instance.
+- Capture at least three reviewed examples from real source articles and preserve safe execution evidence.
+- Record a short walkthrough of source extraction, draft generation, validation/review, and dry-run behavior.
+- Test approval, failure, and retry paths before considering production use.
 
 ## License
 
-No license has been added yet. Contact the repository owner before reusing this project.
+No license is currently provided. Please contact the repository owner before reusing or redistributing this project.
