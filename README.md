@@ -12,7 +12,7 @@ An n8n automation prototype for discovering PlacidWay articles, drafting social 
 
 | File | Purpose |
 |---|---|
-| [workflow.json](./workflow.json) | Importable n8n workflow export |
+| [placidway-social-media-automation.json](./placidway-social-media-automation.json) | Importable n8n workflow export |
 | [README.md](./README.md) | Project overview, setup, configuration, and known limitations |
 
 ## Workflow at a glance
@@ -88,7 +88,7 @@ The export references two n8n Data Tables: one for content/deduplication state a
 
 ## Run it in your own n8n instance
 
-1. Download [workflow.json](./workflow.json).
+1. Download [placidway-social-media-automation.json](./placidway-social-media-automation.json).
 2. Import the JSON into n8n.
 3. Inspect the workflow and review the **Workflow Config** node.
 4. Recreate or map the required n8n Data Tables in your environment.
