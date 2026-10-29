@@ -47,14 +47,60 @@ An n8n automation prototype for discovering PlacidWay articles, drafting social 
 
 A successful dry run verified the source-to-generated-draft path with a real source article and LLM generation. It does **not** prove that a post has been published to Facebook.
 
-## Example generated draft
+## Example generated drafts
 
-**Source:** [Stem Cell Facial Rejuvenation in Japan: A Patient's Five-Entry Diary](https://www.placidway.com/article/9807/Stem-Cell-Facial-Rejuvenation-in-Japan-A-Patients-Five-Entry-Diary)
+The following three outputs were captured from existing successful workflow executions. Each returned `status: ok` and included validation notes linking the draft's main statements to its source article. These are examples of generated copy, **not** proof that the medical claims have been independently verified or that any post was published.
 
-> Considering stem cell facial rejuvenation in Japan? Explore the questions behind the journey. This five-entry diary covers expectations, recovery, safety and key considerations. The composite case describes cultured adipose-derived cells, Tokyo and two trips about five weeks apart. It also highlights checking treatment plans, clinic registration and licensed cell-processing labs under Japan's framework. Read the full article for the diary and planning considerations.
+### Example 1 — Stem cell facial rejuvenation in Japan
 
-This is an illustrative generated draft, not medical advice or an endorsement of a treatment. Health-related claims and source accuracy should be reviewed by a qualified human before approval or publication.
+**Source:** [Stem Cell Facial Rejuvenation in Japan: A Patient's Five-Entry Diary](https://www.placidway.com/article/9807/Stem-Cell-Facial-Rejuvenation-in-Japan-A-Patients-Five-Entry-Diary)  
+**Workflow result:** `ok` · **Validation notes:** present
 
+> Considering stem cell facial rejuvenation in Japan? Explore the questions behind the journey.
+>
+> This five-entry diary covers expectations, recovery, safety and key considerations.
+>
+> The composite case describes cultured adipose-derived cells, Tokyo and two trips about five weeks apart.
+>
+> It also highlights checking treatment plans, clinic registration and licensed cell-processing labs under Japan's framework.
+>
+> Read the full article for the diary and planning considerations.
+>
+> #MedicalTravel #Japan #StemCellResearch #FacialRejuvenation
+
+### Example 2 — Single-port robotic liver surgery in Saudi Arabia
+
+**Source:** [Single-Port Robotic Liver Surgery in Saudi Arabia for Liver Tumors](https://www.placidway.com/article/9836/Single-Port-Robotic-Liver-Surgery-in-Saudi-Arabia-for-Liver-Tumors-Smaller-Incisions-Renewed-Hope)  
+**Workflow result:** `ok` · **Validation notes:** present
+
+> A milestone in single-port robotic liver surgery is being reported in Saudi Arabia.
+>
+> KFSHRC in Riyadh introduced robotic liver transplantation in 2023 and has completed over 165 robotic liver transplants.
+>
+> The single-port system uses one small incision for surgical instruments and a 3D high-definition camera.
+>
+> Read the full article to learn more about this approach and KFSHRC.
+>
+> #RoboticSurgery #LiverTumors #MedicalTravel #SaudiArabia
+
+### Example 3 — Robot-assisted deep brain stimulation (DBS) in Saudi Arabia
+
+**Source:** [Robot-Assisted Deep Brain Stimulation (DBS) Surgery in Saudi Arabia](https://www.placidway.com/article/9837/Robot-Assisted-Deep-Brain-Stimulation-DBS-Surgery-in-Saudi-Arabia-Restoring-Movement-and-Quality-of-Life)  
+**Workflow result:** `ok` · **Validation notes:** present
+
+> Exploring robot-assisted DBS surgery in Saudi Arabia?
+>
+> KFSHRC in Riyadh uses an integrated robotic guidance system for severe movement disorders.
+>
+> DBS is evaluated for Parkinson's disease, essential tremor, dystonia, and medication-refractory motor fluctuations.
+>
+> High-resolution imaging and real-time navigation support electrode placement with submillimeter accuracy.
+>
+> Read the full article for more information about the centre and procedure.
+>
+> #DeepBrainStimulation #DBS #Neurosurgery #SaudiArabia
+
+**Review note:** The validation notes explain which source details support each draft. They are traceability aids, not independent clinical fact-checking. A qualified human should verify medical statements, wording, and source accuracy before approval or publication.
 ## Architecture
 
 1. **Trigger:** daily schedule or manual execution.
