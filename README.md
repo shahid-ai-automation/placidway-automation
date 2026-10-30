@@ -1,12 +1,12 @@
 # PlacidWay Daily Social Media Content Automation
 
 [![n8n](https://img.shields.io/badge/Workflow-n8n-EA4B71?logo=n8n&logoColor=white)](https://n8n.io/)
-[![Mode](https://img.shields.io/badge/Publishing-Dry%20Run%20Only-orange)](#current-status)
+[![Mode](https://img.shields.io/badge/Publishing-Live%20Test%20Page%20Verified-success)](#current-status)
 [![Status](https://img.shields.io/badge/Project-Prototype-blue)](#current-status)
 
-An n8n automation prototype for discovering PlacidWay articles, drafting social media copy with an LLM, validating the draft, optionally running a second review pass, and logging each execution.
+An n8n workflow for discovering public PlacidWay articles, drafting social media copy with an LLM, validating the draft, optionally running a second review pass, publishing approved content to a candidate-owned Facebook test Page, and logging each execution.
 
-> **Current scope:** Source-to-draft automation is demonstrated in a successful dry run. Live Facebook publishing is not yet configured or verified.
+> **Current scope:** Source-to-draft generation has passed dry-run testing. A live Facebook photo post was also successfully published to and visually verified on the candidate-owned test Page. The workflow remains in approval mode by default; this does not mean unattended daily end-to-end publishing has been verified.
 
 ## Repository contents
 
@@ -28,7 +28,7 @@ An n8n automation prototype for discovering PlacidWay articles, drafting social 
 - **LLM-assisted drafting:** generates concise social copy with a configurable character limit.
 - **Quality checks:** rule-based validation followed by an optional second LLM review.
 - **Operational visibility:** writes run outcomes to a separate n8n Data Table; retry and alert paths are included in the workflow.
-- **Safer publishing posture:** approval mode is enabled and Facebook dry-run mode is on by default.
+- **Controlled publishing:** approval mode remains enabled. The current export is configured for live publishing to the candidate-owned test Page after approval; the Page access token is held in n8n credentials, not in this repository.
 
 ## Current status
 
@@ -45,7 +45,7 @@ An n8n automation prototype for discovering PlacidWay articles, drafting social 
 | Live Facebook publishing | **Not yet configured or verified** |
 | Reviewer and alert webhook destinations | Blank / require configuration |
 
-A successful dry run verified the source-to-generated-draft path with a real source article and LLM generation. It does **not** prove that a post has been published to Facebook.
+The source-to-draft path was validated in dry-run executions using real source articles and LLM generation. Separately, the Facebook photo-post node successfully created a live post on the candidate-owned test Page; the caption, article link, hashtags, and featured image were visually checked. This confirms that the Page credential and photo-publishing API path worked for that test. It does not establish that a complete scheduled daily run or the text-only publishing branch has been independently verified.
 
 ## Example generated drafts
 
@@ -110,7 +110,7 @@ The following three outputs were captured from existing successful workflow exec
 5. **Enrich:** wait before fetching the selected article page and extract available page metadata/content.
 6. **Generate:** request a social post from the configured LLM.
 7. **Validate and review:** apply deterministic checks and optionally request a second LLM safety review.
-8. **Approval / dry run:** route through the configured approval path or simulate publishing while Facebook dry-run mode is enabled.
+8. **Approval / publishing:** route through the configured approval path; the current export targets the candidate-owned test Page with Facebook dry-run disabled. The dry-run simulation remains available for mock/test scenarios.
 9. **Persist and observe:** update content state, write a run-log entry, and route failures through configured error/alert handling.
 
 ## Configuration reference
@@ -126,7 +126,7 @@ The workflow's **Workflow Config** node centralizes the main settings.
 | USE_MOCK_LLM | false |
 | ENABLE_LLM_REVIEW | true |
 | MAX_POST_CHARS | 500 |
-| FACEBOOK_DRY_RUN | true |
+| FACEBOOK_DRY_RUN | false (live test-Page publishing path) |\n| FB_TEST_PAGE_ID | Candidate-owned test Page configured |
 | APPROVAL_TIMEOUT_HOURS | 24 |
 | MAX_RETRIES | 3 |
 
@@ -156,7 +156,7 @@ Configuration details may vary with n8n version and Meta app permissions.
 
 ## Known limitations and next steps
 
-- **No live Facebook post has been demonstrated by the current dry run.**
+- The live photo-post test succeeded on the candidate-owned test Page. The full scheduled daily workflow, text-only publishing branch, and long-running operational reliability should still be verified separately.
 - Reviewer and alert webhooks are not configured in this export.
 - Data Tables and LLM credentials need to be configured in the destination n8n instance.
 - Capture at least three reviewed examples from real source articles and preserve safe execution evidence.
