@@ -83,13 +83,13 @@
               "id": "workflowConfig-9",
               "name": "FACEBOOK_DRY_RUN",
               "type": "boolean",
-              "value": true
+              "value": false
             },
             {
               "id": "workflowConfig-10",
               "name": "FB_TEST_PAGE_ID",
               "type": "string",
-              "value": "<__PLACEHOLDER_VALUE__Numeric ID of YOUR OWN test Facebook Page (never a PlacidWay Page)__>"
+              "value": "1231790556997845"
             },
             {
               "id": "workflowConfig-11",
@@ -1713,9 +1713,14 @@
         -5600,
         -3184
       ],
-      "disabled": true,
       "onError": "continueRegularOutput",
-      "notes": "CREDENTIAL REQUIRED: Page access token for the candidate-owned TEST Page (pages_manage_posts). Target = FB_TEST_PAGE_ID. Never retried automatically to avoid double posts."
+      "notes": "CREDENTIAL REQUIRED: Page access token for the candidate-owned TEST Page (pages_manage_posts). Target = FB_TEST_PAGE_ID. Never retried automatically to avoid double posts.",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "BOPMonwjqPbbSknL",
+          "name": "Facebook Graph account"
+        }
+      }
     },
     {
       "parameters": {
@@ -1746,9 +1751,14 @@
         -5600,
         -2976
       ],
-      "disabled": true,
       "onError": "continueRegularOutput",
-      "notes": "CREDENTIAL REQUIRED: same TEST Page token. Text-only post when no featured image is available. Never retried automatically."
+      "notes": "CREDENTIAL REQUIRED: same TEST Page token. Text-only post when no featured image is available. Never retried automatically.",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "BOPMonwjqPbbSknL",
+          "name": "Facebook Graph account"
+        }
+      }
     },
     {
       "parameters": {
@@ -2252,7 +2262,7 @@
     },
     {
       "parameters": {
-        "content": "## PlacidWay Daily Social Media Content Automation (DEMO)\nSchedule (daily 09:00) or Manual Test Run -> **Workflow Config** -> extract -> pick 1 new item -> duplicate lock -> generate -> guardrails -> approval -> publish to **TEST Page** -> log/alert.\n\n**Safe defaults:** SOURCE_MODE=mock, USE_MOCK_LLM=true, FACEBOOK_DRY_RUN=true, APPROVAL_MODE=true. Nothing reaches OpenAI or Facebook until you change these AND add credentials.\n\n**Never** post to a PlacidWay Facebook Page. Add their Page IDs to BLOCKED_PAGE_IDS as an extra guard.\n\n**Test scenarios** (TEST_SCENARIO, or pass it as Manual Trigger input): valid_source_item, duplicate_url, no_eligible_content, missing_image, invalid_ai_output, unsupported_medical_claim, expired_token, publishing_failure. Mock records are labelled [TEST DATA] and use .invalid URLs.",
+        "content": "## PlacidWay Daily Social Media Content Automation (DEMO)\nSchedule (daily 09:00) or Manual Test Run -> Workflow Config -> extract -> select 1 new item -> deduplicate -> generate -> guardrails -> approval -> publish to candidate-owned TEST Page -> log/alert.\n\n**Current verified configuration:** SOURCE_MODE=live, USE_MOCK_LLM=false, FACEBOOK_DRY_RUN=false, APPROVAL_MODE=true. Facebook photo publishing was successfully tested against the candidate-owned test Page. The Page access token is stored in n8n credentials and is not included in this export.\n\n**Safety:** Never publish to a PlacidWay-owned Page. Keep APPROVAL_MODE=true unless an authorized operator deliberately changes it. Add PlacidWay Page IDs to BLOCKED_PAGE_IDS as an additional guard.\n\n**Test scenarios:** valid_source_item, duplicate_url, no_eligible_content, missing_image, invalid_ai_output, unsupported_medical_claim, expired_token, publishing_failure. Mock records are labelled [TEST DATA] and use .invalid URLs.",
         "height": 420,
         "width": 600,
         "color": 4
